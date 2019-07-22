@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.271
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnityPlugin", "UnityPlugin.vcxproj", "{1E33BB12-2F37-4E2C-B6D4-407C420A46EB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E33BB12-2F37-4E2C-B6D4-407C420A46EB}.Release|x64.ActiveCfg = Release|x64
+		{1E33BB12-2F37-4E2C-B6D4-407C420A46EB}.Release|x64.Build.0 = Release|x64
+		{1E33BB12-2F37-4E2C-B6D4-407C420A46EB}.Release|x86.ActiveCfg = Release|Win32
+		{1E33BB12-2F37-4E2C-B6D4-407C420A46EB}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DF860057-BB11-4778-916B-458BA79DA027}
+	EndGlobalSection
+EndGlobal
