@@ -59,6 +59,7 @@ void onRawInput(HRAWINPUT rawInputHandle) {
 	BYTE* data = new BYTE[dataSize];
 	if (GetRawInputData(rawInputHandle, RID_INPUT, data, &dataSize, sizeof(RAWINPUTHEADER)) != dataSize) {
 		std::cerr << "RawInput data size wrong" << std::endl;
+		delete[] data;
 		return;
 	}
 
@@ -142,6 +143,7 @@ void unityplugin_reset() {
 void unityplugin_kill() {
 	SendMessage(window, WM_CLOSE, NULL, NULL); // calls PostQuitMessage(0) breaking us out of GetMessage loop
 	inputThread.join();
-	devices.clear();
-	mouseStates.clear();
+	for (size_t i = 0; i < mouseStates.size(); ++i) {
+		mouseStates[i] = {};
+	}
 }
