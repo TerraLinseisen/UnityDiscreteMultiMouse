@@ -124,7 +124,9 @@ void recieveInput() {
 }
 
 void unityplugin_init() {
-	inputThread = std::thread(recieveInput);
+	if (!inputThread.joinable()) {
+		inputThread = std::thread(recieveInput);
+	}
 }
 
 void unityplugin_poll(MouseState** arr, int* length) {
@@ -133,17 +135,41 @@ void unityplugin_poll(MouseState** arr, int* length) {
 	*length = mouseStates.size();
 }
 
-void unityplugin_reset() {
+void unityplugin_resetMouseStates() {
 	for (size_t i = 0; i < mouseStates.size(); ++i) {
 		mouseStates[i].reset();
 	}
 	mtx.unlock();
 }
 
+void unityplugin_resetMouseList() {
+	mtx.lock();
+	devices.clear();
+	mouseStates.clear();
+	mtx.unlock();
+}
+
+void unityplugin_resetDeviceHwnds() {
+	mtx.lock();
+	UINT numDevices;
+	GetRegisteredRawInputDevices(NULL, &numDevices, sizeof(RAWINPUTDEVICE));
+	if (numDevices > 0) {
+		RAWINPUTDEVICE *devices = new RAWINPUTDEVICE[numDevices];
+		GetRegisteredRawInputDevices(devices, &numDevices, sizeof(RAWINPUTDEVICE));
+		for (size_t i = 0; i < numDevices; ++i) {
+			devices[i].hwndTarget = window;
+		}
+		RegisterRawInputDevices(devices, numDevices, sizeof(RAWINPUTDEVICE));
+	}
+	mtx.unlock();
+}
+
 void unityplugin_kill() {
-	SendMessage(window, WM_CLOSE, NULL, NULL); // calls PostQuitMessage(0) breaking us out of GetMessage loop
-	inputThread.join();
-	for (size_t i = 0; i < mouseStates.size(); ++i) {
-		mouseStates[i] = {};
+	if (inputThread.joinable()) {
+		SendMessage(window, WM_CLOSE, NULL, NULL); // calls PostQuitMessage(0) breaking us out of GetMessage loop
+		inputThread.join();
+		for (size_t i = 0; i < mouseStates.size(); ++i) {
+			mouseStates[i] = {};
+		}
 	}
 }
