@@ -28,5 +28,5 @@ extern "C" UNITYPLUGIN_API void unityplugin_init();
 extern "C" UNITYPLUGIN_API void unityplugin_poll(MouseState** arr, int* len);
 extern "C" UNITYPLUGIN_API void unityplugin_resetMouseStates();
 extern "C" UNITYPLUGIN_API void unityplugin_resetMouseList();
-extern "C" UNITYPLUGIN_API void unityplugin_resetDeviceHwnds();
+extern "C" UNITYPLUGIN_API void unityplugin_reRegisterMice();
 extern "C" UNITYPLUGIN_API void unityplugin_kill();

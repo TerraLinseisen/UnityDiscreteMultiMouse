@@ -27,7 +27,7 @@ public class DiscreteMultiMouse : MonoBehaviour {
     [DllImport("DiscreteMultiMouse")]
     static extern void unityplugin_resetMouseList();
     [DllImport("DiscreteMultiMouse")]
-    static extern void unityplugin_resetDeviceHwnds();
+    static extern void unityplugin_reRegisterMice();
     [DllImport("DiscreteMultiMouse")]
     static extern void unityplugin_kill();
 
@@ -110,26 +110,16 @@ public class DiscreteMultiMouse : MonoBehaviour {
         Cursor.lockState = CursorLockMode.Locked;
     }
 
-    // wrapper function because invoke won't accept a static function directly
-    void ResetDeviceHwnds() {
-        unityplugin_resetDeviceHwnds();
-    }
-    void OnApplicationFocus(bool hasFocus) {
-        if (hasFocus) {
-            // Unity sets the HWNDs associated with RawInputDevices one frame after
-            // OnApplicationFocus is called.
-            //
-            // I need to undo that to recieve input, and Invoke with a time of 0 delays
-            // my function just long enough.
-            Invoke("ResetDeviceHwnds", 0.0f);
-        }
-    }
-
     void OnApplicationQuit() {
         unityplugin_kill();
     }
 
     void Update() {
+        // if unity is getting mouse delta we aren't
+        if (Input.GetAxis("Mouse X") != 0.0f || Input.GetAxis("Mouse Y") != 0.0f) {
+            // fix that by re-registering our rawinputdevices
+            unityplugin_reRegisterMice();
+        }
         unityplugin_poll(out mouseStates, out int length);
         unityplugin_resetMouseStates();
         while (length > sensitivities.Count) {

@@ -149,18 +149,14 @@ void unityplugin_resetMouseList() {
 	mtx.unlock();
 }
 
-void unityplugin_resetDeviceHwnds() {
+void unityplugin_reRegisterMice() {
 	mtx.lock();
-	UINT numDevices;
-	GetRegisteredRawInputDevices(NULL, &numDevices, sizeof(RAWINPUTDEVICE));
-	if (numDevices > 0) {
-		RAWINPUTDEVICE *devices = new RAWINPUTDEVICE[numDevices];
-		GetRegisteredRawInputDevices(devices, &numDevices, sizeof(RAWINPUTDEVICE));
-		for (size_t i = 0; i < numDevices; ++i) {
-			devices[i].hwndTarget = window;
-		}
-		RegisterRawInputDevices(devices, numDevices, sizeof(RAWINPUTDEVICE));
-	}
+	RAWINPUTDEVICE rawInputDevice;
+	rawInputDevice.usUsagePage = 0x01;	// generic desktop controls
+	rawInputDevice.usUsage = 0x02;		// mouse
+	rawInputDevice.dwFlags = RIDEV_INPUTSINK;	// receive input even when not in the foreground
+	rawInputDevice.hwndTarget = window;
+	RegisterRawInputDevices(&rawInputDevice, 1, sizeof(RAWINPUTDEVICE));
 	mtx.unlock();
 }
 
