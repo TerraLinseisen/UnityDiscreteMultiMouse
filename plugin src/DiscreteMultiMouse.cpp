@@ -7,6 +7,7 @@
 
 std::vector<MouseState> mouseStates;
 std::vector<HANDLE> devices; // lookup table, device HANDLE to index in mouseStates
+std::vector<BYTE> buffer(sizeof(RAWINPUT));	// to avoid repeated allocations in tight loop
 std::mutex mtx; // controls access to mouseStates
 std::thread inputThread;
 HWND window;
@@ -56,19 +57,19 @@ void onRawInput(HRAWINPUT rawInputHandle) {
 		return;
 	}
 
-	BYTE* data = new BYTE[dataSize];
-	if (GetRawInputData(rawInputHandle, RID_INPUT, data, &dataSize, sizeof(RAWINPUTHEADER)) != dataSize) {
+	if (buffer.size() < dataSize) {
+		buffer.resize(dataSize);
+	}
+
+	if (GetRawInputData(rawInputHandle, RID_INPUT, buffer.data(), &dataSize, sizeof(RAWINPUTHEADER)) != dataSize) {
 		std::cerr << "RawInput data size wrong" << std::endl;
-		delete[] data;
 		return;
 	}
 
-	PRAWINPUT rawInput = (RAWINPUT*)data;
+	PRAWINPUT rawInput = (RAWINPUT*)buffer.data();
 	if (rawInput->header.dwType == RIM_TYPEMOUSE) {
 		updateMouseState(rawInput);
 	}
-
-	delete[] data;
 }
 
 LRESULT CALLBACK WndProc(HWND window, UINT msg, WPARAM wp, LPARAM lp) {
