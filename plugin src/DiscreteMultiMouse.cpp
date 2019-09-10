@@ -2,11 +2,12 @@
 #include <iostream>
 #include <mutex>
 #include <thread>
+#include <unordered_map> 
 #include <vector>
 #include <windows.h>
 
 std::vector<MouseState> mouseStates;
-std::vector<HANDLE> devices; // lookup table, device HANDLE to index in mouseStates
+std::unordered_map<HANDLE, size_t> devices; // lookup table, device HANDLE to index in mouseStates
 std::vector<BYTE> buffer(sizeof(RAWINPUT));	// to avoid repeated allocations in tight loop
 std::mutex mtx; // controls access to mouseStates
 std::thread inputThread;
@@ -14,15 +15,11 @@ HWND window;
 
 // index is assigned by order that input is first recieved by device
 size_t getIndex(HANDLE device) {
-	size_t i = 0;
-	for (; i < devices.size(); ++i) {
-		if (devices[i] == device) {
-			return i;
-		}
+	auto result = devices.try_emplace(device, devices.size());
+	if (result.second) {
+		mouseStates.emplace_back();
 	}
-	devices.push_back(device);
-	mouseStates.emplace_back();
-	return i;
+	return result.first->second;
 }
 
 void updateMouseState(PRAWINPUT rawInput) {
