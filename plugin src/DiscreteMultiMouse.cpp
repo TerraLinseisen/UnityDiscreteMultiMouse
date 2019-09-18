@@ -65,7 +65,9 @@ void onRawInput(HRAWINPUT rawInputHandle) {
 
 	PRAWINPUT rawInput = (RAWINPUT*)buffer.data();
 	if (rawInput->header.dwType == RIM_TYPEMOUSE) {
+        mtx.lock();
 		updateMouseState(rawInput);
+        mtx.unlock();
 	}
 }
 
@@ -114,9 +116,7 @@ void recieveInput() {
 	MSG msg;
 	// WM_INPUT as GetMessage parameters stops us from recieving other message types
 	while (GetMessage(&msg, window, WM_INPUT, WM_INPUT)) {
-		mtx.lock();
 		DispatchMessage(&msg);
-		mtx.unlock();
 	}
 	return;
 }
