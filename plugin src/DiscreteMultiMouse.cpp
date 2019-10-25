@@ -121,33 +121,33 @@ void recieveInput() {
 	return;
 }
 
-void unityplugin_init() {
+void Init() {
 	if (!inputThread.joinable()) {
 		inputThread = std::thread(recieveInput);
 	}
 }
 
-void unityplugin_poll(MouseState** arr, int* length) {
+void Poll(MouseState** arr, int* length) {
 	mtx.lock();
 	*arr = &mouseStates[0];
 	*length = mouseStates.size();
 }
 
-void unityplugin_resetMouseStates() {
+void ResetMouseStates() {
 	for (size_t i = 0; i < mouseStates.size(); ++i) {
 		mouseStates[i].reset();
 	}
 	mtx.unlock();
 }
 
-void unityplugin_resetMouseList() {
+void ResetMouseList() {
 	mtx.lock();
 	devices.clear();
 	mouseStates.clear();
 	mtx.unlock();
 }
 
-void unityplugin_reRegisterMice() {
+void ReRegisterMice() {
 	mtx.lock();
 	RAWINPUTDEVICE rawInputDevice;
 	rawInputDevice.usUsagePage = 0x01;	// generic desktop controls
@@ -158,7 +158,7 @@ void unityplugin_reRegisterMice() {
 	mtx.unlock();
 }
 
-void unityplugin_kill() {
+void Kill() {
 	if (inputThread.joinable()) {
 		SendMessage(window, WM_CLOSE, NULL, NULL); // calls PostQuitMessage(0) breaking us out of GetMessage loop
 		inputThread.join();

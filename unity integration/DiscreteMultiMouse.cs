@@ -16,20 +16,20 @@ public class DiscreteMultiMouse : MonoBehaviour {
     static List<float> sensitivities;
 
     [DllImport("DiscreteMultiMouse")]
-    static extern void unityplugin_init();
+    static extern void Init();
     [DllImport("DiscreteMultiMouse")]
-    static extern void unityplugin_poll(
+    static extern void Poll(
         [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.Struct, SizeParamIndex = 1)]
         out MouseState[] arr, out int len
     );
     [DllImport("DiscreteMultiMouse")]
-    static extern void unityplugin_resetMouseStates();
+    static extern void ResetMouseStates();
     [DllImport("DiscreteMultiMouse")]
-    static extern void unityplugin_resetMouseList();
+    static extern void ResetMouseList();
     [DllImport("DiscreteMultiMouse")]
-    static extern void unityplugin_reRegisterMice();
+    static extern void ReRegisterMice();
     [DllImport("DiscreteMultiMouse")]
-    static extern void unityplugin_kill();
+    static extern void Kill();
 
     public static int MouseCount() {
         return mouseStates.Length;
@@ -101,8 +101,8 @@ public class DiscreteMultiMouse : MonoBehaviour {
     static DiscreteMultiMouse() {
         mouseStates = new MouseState[0];
         sensitivities = new List<float>();
-        unityplugin_resetMouseList();
-        unityplugin_init();
+        Init();
+        ResetMouseList();
     }
 
     void Awake() {
@@ -111,17 +111,17 @@ public class DiscreteMultiMouse : MonoBehaviour {
     }
 
     void OnApplicationQuit() {
-        unityplugin_kill();
+        Kill();
     }
 
     void Update() {
         // if unity is getting mouse delta we aren't
         if (Input.GetAxis("Mouse X") != 0.0f || Input.GetAxis("Mouse Y") != 0.0f) {
             // fix that by re-registering our rawinputdevices
-            unityplugin_reRegisterMice();
+            ReRegisterMice();
         }
-        unityplugin_poll(out mouseStates, out int length);
-        unityplugin_resetMouseStates();
+        Poll(out mouseStates, out int length);
+        ResetMouseStates();
         while (length > sensitivities.Count) {
             sensitivities.Add(1.0f);
         }

@@ -24,9 +24,9 @@ struct MouseState {
 	};
 };
 
-extern "C" UNITYPLUGIN_API void unityplugin_init();
-extern "C" UNITYPLUGIN_API void unityplugin_poll(MouseState** arr, int* len);
-extern "C" UNITYPLUGIN_API void unityplugin_resetMouseStates();
-extern "C" UNITYPLUGIN_API void unityplugin_resetMouseList();
-extern "C" UNITYPLUGIN_API void unityplugin_reRegisterMice();
-extern "C" UNITYPLUGIN_API void unityplugin_kill();
+extern "C" UNITYPLUGIN_API void Init();
+extern "C" UNITYPLUGIN_API void Poll(MouseState** arr, int* len);
+extern "C" UNITYPLUGIN_API void ResetMouseStates();
+extern "C" UNITYPLUGIN_API void ResetMouseList();
+extern "C" UNITYPLUGIN_API void ReRegisterMice();
+extern "C" UNITYPLUGIN_API void Kill();
