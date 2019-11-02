@@ -31,11 +31,11 @@ public class DiscreteMultiMouse : MonoBehaviour {
     [DllImport("DiscreteMultiMouse")]
     static extern void Kill();
 
-    public static int MouseCount() {
-        return mouseStates.Length;
+    public static int micePresent {
+        get => mouseStates.Length;
     }
 
-    public static Vector2 Delta(int mouse) {
+    public static Vector2 GetDelta(int mouse) {
         if (mouse >= mouseStates.Length || mouse < 0) {
             return Vector2.zero;
         }
@@ -108,6 +108,12 @@ public class DiscreteMultiMouse : MonoBehaviour {
     void Awake() {
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
+    }
+
+    void OnApplicationFocus(bool hasFocus) {
+        if (hasFocus) {
+            ReRegisterMice();
+        }
     }
 
     void OnApplicationQuit() {
